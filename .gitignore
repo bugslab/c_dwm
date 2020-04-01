@@ -1,0 +1,7 @@
+*.orig
+*.o
+dwm
+*.rej
+*.diff
+nohup.out
+config.h
