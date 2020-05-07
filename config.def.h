@@ -73,6 +73,7 @@ static const char scratchpadvifmname[] = "float-vifm";
 static const char *floatvifmcmd[] = { "st", "-t", scratchpadvifmname, "-f", "mono:pixelsize=14:antialias=true:autohint=true:style=Regular", "-g", "92x42", "-e", "vifm", NULL };
 
 static const char *newsboat[] = { "st", "-e", "/usr/bin/sh", "-c", "newsboat", NULL };
+static const char *clipmenu[] = { "clipmenu", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function         argument */
@@ -81,6 +82,7 @@ static Key keys[] = {
     { MODKEY,                       XK_s,      togglefloatterm, {.v = floattermcmd } },
     { MODKEY,                       XK_e,      togglefloatvifm, {.v = floatvifmcmd } },
     { MODKEY,                       XK_n,      spawn,           {.v = newsboat } },
+    { MODKEY,                       XK_c,      spawn,           {.v = clipmenu } },
 	{ MODKEY,                       XK_b,      togglebar,       {0} },
 	{ MODKEY,                       XK_j,      focusstack,      {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,      {.i = -1 } },
