@@ -4,4 +4,5 @@ dwm
 *.rej
 *.diff
 nohup.out
-config.h
+.ccls-cache/
+compile_commands.json

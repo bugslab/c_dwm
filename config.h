@@ -1,5 +1,3 @@
-/* See LICENSE file for copyright and license details. */
-
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -17,13 +15,29 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#005577";
-static const char col_orchid[]      = "#d75fff";
 static const char col_defaultbg[]   = "#121212";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
     [SchemeNorm] = { col_gray3, col_defaultbg, col_gray2 },
     [SchemeSel]  = { col_gray4, col_gray1, col_cyan },
+};
+
+
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+
+const char *minist[] = {"st", "-n", "spminiterm", "-f", "mono:pixelsize=16:antialias=true:autohint=true:style=Regular", "-g", "110x26", NULL };
+const char *vifm[] = {"st", "-n", "spvifm", "-f", "mono:pixelsize=16:antialias=true:autohint=true:style=Regular", "-g", "92x42", "-e", "vifm", NULL };
+const char *keepxc[] = {"keepassxc", NULL };
+
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spminiterm", minist},
+	{"spvifm",     vifm},
+	{"keepassxc",  keepxc},
 };
 
 /* tagging */
@@ -34,11 +48,13 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "st",      NULL,     NULL,           0,         0,          1,          -1,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         1,          0,           1,        -1 }, /* xev */
+	/* class      instance      title       tags mask       isfloating   monitor */
+	{ "Gimp",     NULL,         NULL,       0,              1,           -1 },
+	{ "Firefox",  NULL,         NULL,       1 << 8,         0,           -1 },
+	{ NULL,		  "spminiterm",	NULL,		SPTAG(0),		1,			 -1 },
+	{ NULL,		  "spvifm",		NULL,		SPTAG(1),		1,			 -1 },
+	{ NULL,		  "caloteiro",	NULL,		0,		        1,			 -1 },
+	{ NULL,		  "keepassxc",	NULL,		SPTAG(2),		1,			 -1 },
 };
 
 /* layout(s) */
@@ -65,51 +81,51 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
-
-static const char scratchpadtermname[] = "float-term";
-static const char *floattermcmd[] = { "st", "-t", scratchpadtermname, "-f", "mono:pixelsize=14:antialias=true:autohint=true:style=Regular", "-g", "110x26", NULL };
-
-static const char scratchpadvifmname[] = "float-vifm";
-static const char *floatvifmcmd[] = { "st", "-t", scratchpadvifmname, "-f", "mono:pixelsize=14:antialias=true:autohint=true:style=Regular", "-g", "92x42", "-e", "vifm", NULL };
-
-static const char *newsboat[] = { "st", "-e", "/usr/bin/sh", "-c", "newsboat", NULL };
+static char dmenumon[2] = "0";
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, NULL };
+static const char *dmenucmdcalc[] = { "dmenu_run", "--font", "mono:pixelsize=14:antialias=true:autohint=true:style=Regular", "-m", dmenumon, "-=", NULL };
+static const char *termcmd[]  = { "st", "-f", "mono:pixelsize=20:antialias=true:autohint=true:style=Regular",  NULL };
+static const char *newsboat[] = { "st", "-f", "mono:pixelsize=20:antialias=true:autohint=true:style=Regular", "-e", "/usr/bin/sh", "-c", "newsboat", NULL };
 static const char *clipmenu[] = { "clipmenu", NULL };
+static const char *slock[] = { "slock", NULL };
+static const char *passmenu[] = { "passmenu", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function         argument */
 	{ MODKEY,                       XK_d,      spawn,           {.v = dmenucmd } },
+	{ MODKEY,                       XK_a,      spawn,           {.v = dmenucmdcalc } },
+	{ MODKEY,                       XK_comma,  spawn,           {.v = slock } },
 	{ MODKEY,                       XK_Return, spawn,           {.v = termcmd } },
-    { MODKEY,                       XK_s,      togglefloatterm, {.v = floattermcmd } },
-    { MODKEY,                       XK_e,      togglefloatvifm, {.v = floatvifmcmd } },
-    { MODKEY,                       XK_n,      spawn,           {.v = newsboat } },
-    { MODKEY,                       XK_g,      spawn,           {.v = clipmenu } },
+	{ MODKEY,                       XK_s,      togglescratch,   {.ui = 0 } },
+	{ MODKEY,                       XK_e,      togglescratch,   {.ui = 1 } },
+	{ MODKEY,                       XK_r,      togglescratch,   {.ui = 2 } },
+	{ MODKEY,                       XK_n,      spawn,           {.v = newsboat } },
+	{ MODKEY,                       XK_g,      spawn,           {.v = clipmenu } },
+	{ MODKEY,                       XK_p,      spawn,           {.v = passmenu } },
 	{ MODKEY,                       XK_b,      togglebar,       {0} },
 	{ MODKEY,                       XK_j,      focusstack,      {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,      {.i = -1 } },
-    { MODKEY,                       XK_i,      incnmaster,      {.i = +1 } },
-    { MODKEY|ShiftMask,             XK_i,      incnmaster,      {.i = -1 } },
+	{ MODKEY,                       XK_i,      incnmaster,      {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_i,      incnmaster,      {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,        {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,        {.f = +0.05} },
-    { MODKEY|ShiftMask,             XK_Return, zoom,            {0} },
+	{ MODKEY|ShiftMask,             XK_Return, zoom,            {0} },
 	{ MODKEY,                       XK_Tab,    view,            {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,      {0} },
-    { MODKEY,                       XK_f,      togglefullscr,   {0} },
-    { MODKEY,                       XK_q,      killclient,      {0} },
-    { MODKEY|ShiftMask,             XK_q,      killclient,      {0} },
-  /*{ MODKEY,                       XK_t,      setlayout,       {.v = &layouts[0]} },
+	{ MODKEY,                       XK_f,      togglefullscr,   {0} },
+	{ MODKEY,                       XK_q,      killclient,      {0} },
+	{ MODKEY|ShiftMask,             XK_q,      killclient,      {0} },
+	 /*{ MODKEY,                       XK_t,      setlayout,       {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,       {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,       {.v = &layouts[2]} }, */
 	{ MODKEY,                       XK_space,  setlayout,       {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating,  {0} },
 	{ MODKEY,                       XK_0,      view,            {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,             {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,        {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,        {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,          {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,          {.i = +1 } },
+	/* { MODKEY|ShiftMask,             XK_0,      tag,             {.ui = ~0 } }, */
+	/* { MODKEY,                       XK_comma,  focusmon,        {.i = -1 } }, */
+	/* { MODKEY,                       XK_period, focusmon,        {.i = +1 } }, */
+	/* { MODKEY|ShiftMask,             XK_comma,  tagmon,          {.i = -1 } }, */
+	/* { MODKEY|ShiftMask,             XK_period, tagmon,          {.i = +1 } }, */
 	TAGKEYS(                        XK_1,                       0)
 	TAGKEYS(                        XK_2,                       1)
 	TAGKEYS(                        XK_3,                       2)
