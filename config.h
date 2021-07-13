@@ -31,13 +31,11 @@ typedef struct {
 
 const char *minist[] = {"st", "-n", "spminiterm", "-f", "mono:pixelsize=16:antialias=true:autohint=true:style=Regular", "-g", "110x26", NULL };
 const char *vifm[] = {"st", "-n", "spvifm", "-f", "mono:pixelsize=16:antialias=true:autohint=true:style=Regular", "-g", "92x42", "-e", "vifm", NULL };
-const char *keepxc[] = {"keepassxc", NULL };
 
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spminiterm", minist},
 	{"spvifm",     vifm},
-	{"keepassxc",  keepxc},
 };
 
 /* tagging */
@@ -89,6 +87,7 @@ static const char *newsboat[] = { "st", "-f", "mono:pixelsize=20:antialias=true:
 static const char *clipmenu[] = { "clipmenu", NULL };
 static const char *slock[] = { "slock", NULL };
 static const char *passmenu[] = { "passmenu", NULL };
+static const char *tubemenu[] = { "tubemenu", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function         argument */
@@ -102,6 +101,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_n,      spawn,           {.v = newsboat } },
 	{ MODKEY,                       XK_g,      spawn,           {.v = clipmenu } },
 	{ MODKEY,                       XK_p,      spawn,           {.v = passmenu } },
+	{ MODKEY,                       XK_y,      spawn,           {.v = tubemenu } },
 	{ MODKEY,                       XK_b,      togglebar,       {0} },
 	{ MODKEY,                       XK_j,      focusstack,      {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,      {.i = -1 } },
