@@ -88,6 +88,7 @@ static const char *clipmenu[] = { "clipmenu", NULL };
 static const char *slock[] = { "slock", NULL };
 static const char *passmenu[] = { "passmenu", NULL };
 static const char *tubemenu[] = { "tubemenu", NULL };
+static const char *takeashot[] = { "takeashot", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function         argument */
@@ -102,6 +103,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_g,      spawn,           {.v = clipmenu } },
 	{ MODKEY,                       XK_p,      spawn,           {.v = passmenu } },
 	{ MODKEY,                       XK_y,      spawn,           {.v = tubemenu } },
+	{ MODKEY,                       XK_w,      spawn,           {.v = takeashot } },
 	{ MODKEY,                       XK_b,      togglebar,       {0} },
 	{ MODKEY,                       XK_j,      focusstack,      {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,      {.i = -1 } },
